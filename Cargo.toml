@@ -1,0 +1,32 @@
+[package]
+name = "sdjwt-diff"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+license = "Apache-2.0"
+description = "Differential harness for SD-JWT (RFC 9901) verification across Rust crates"
+publish = false
+
+[lib]
+name = "sdjwt_diff"
+
+[dependencies]
+# Implementations under test, pinned to the versions that were read.
+sd-jwt-payload = "=0.5.1"
+affinidi-sd-jwt = "=0.1.8"
+bh-sd-jwt = "=0.7.1"
+bh-jws-utils = "=0.6.2"
+bherror = "=0.1.0"
+sdjwt = "=0.8.1"
+sd-jwt-rs = "=0.7.1"
+jsonwebtoken9 = { package = "jsonwebtoken", version = "=9.3.1" }
+# Reference implementation and corpus builder.
+p256 = { version = "0.13", features = ["ecdsa", "pem", "jwk"] }
+hmac = "0.12"
+sha2 = "0.10"
+base64 = "0.22"
+serde_json = "1"
+futures = { version = "0.3", default-features = false, features = ["executor"] }
+
+[profile.dev.package."*"]
+opt-level = 2
