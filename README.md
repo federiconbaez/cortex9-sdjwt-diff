@@ -97,6 +97,20 @@ Casos abiertos que dividen: `P01` (misma Disclosure dos veces: sd-jwt-payload y 
 | Matriz de divergencias CSV con repro mínimo | **Cumplido**: `results/matrix.csv`, columna `repro` con la presentación exacta |
 | Casos maliciosos que todos deben rechazar como control | **No cumplido para sdjwt y sd-jwt-rs**: aceptan `T12` (Disclosure alterada, sin que el valor falso llegue al payload). `T07`–`T09` los rechazan todos los que los corren |
 
+### Qué prueba y qué no el 66/66 y el 6/6
+
+- **Prueba**:
+  - La referencia y `bh-sd-jwt` coinciden con los veredictos esperados en los 66 casos puntuables, controles incluidos. Son los positivos `V01` y `V12` y los negativos `T07` (alg none), `T08` (otra clave), `T09` (payload alterado) y `T12` (Disclosure alterada).
+  - La referencia además reproduce los vectores de §4.2.1 y §4.2.3 del RFC.
+  - Una implementación que acepta todo falla los 4 negativos.
+- **No prueba**:
+  - Que `bh-sd-jwt` sea correcto fuera de estos 66 casos.
+  - Que la referencia sea correcta: los veredictos esperados los escribió el mismo autor.
+  - Nada sobre el compromiso de la clave del emisor o del holder: con la clave, se firman SD-JWT y KB-JWT válidos.
+  - Nada sobre el replay de una presentación con KB-JWT válido fuera de los chequeos de `nonce`, `aud` e `iat` que elegimos para los casos `K*`.
+  - Nada sobre la serialización JSON, otros algoritmos o fuzzing.
+- **El corpus es nuestro**: 72 casos escritos a mano. Un 100 % sobre él indica consistencia con nuestra lectura del RFC 9901, no ausencia de errores.
+
 ### Nivel de verificación
 
 - **A**: compila, `cargo fmt --check` y `clippy --all-targets -D warnings` limpios, 15/15 tests, ninguno ignorado.
@@ -152,6 +166,15 @@ Casos abiertos que dividen: `P01` (misma Disclosure dos veces: sd-jwt-payload y 
 - ≥4 named crates: met, with the delegation caveats above.
 - CSV with minimal repro: met.
 - All must reject the malicious controls: **not met** for sdjwt and sd-jwt-rs (T12).
+
+**What 66/66 and 6/6 prove and what they don't:**
+- **They prove** that the reference and `bh-sd-jwt` match our expected verdicts on the 66 scored cases, including the controls `V01`, `V12`, `T07`, `T08`, `T09` and `T12`. The reference also reproduces the RFC §4.2.1 and §4.2.3 vectors, and an accept-all implementation fails the 4 negatives.
+- **They don't prove** correctness of `bh-sd-jwt` beyond these cases, or of the reference, since the expected verdicts were written by the same author.
+- **They don't cover**:
+  - issuer or holder key compromise;
+  - replay beyond the `nonce`, `aud` and `iat` checks we chose for `K*`;
+  - JSON serialization, other algorithms or fuzzing.
+- **The corpus is ours**: 72 hand-written cases.
 
 **Verification level: B.**
 
