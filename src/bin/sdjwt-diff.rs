@@ -12,8 +12,10 @@ fn main() {
             .and_then(|i| args.get(i + 1).cloned())
     };
     // Panics inside adapters are caught and recorded as verdicts.
+    let default_hook = std::panic::take_hook();
     std::panic::set_hook(Box::new(|_| {}));
     let m = matrix::run();
+    std::panic::set_hook(default_hook);
     if let Some(p) = get("--csv") {
         std::fs::write(p, m.csv()).expect("write csv");
     }
